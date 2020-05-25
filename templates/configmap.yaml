@@ -1,0 +1,68 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kube-proxy
+data:
+  kube-proxy.yaml: |
+    apiVersion: kubeproxy.config.k8s.io/v1alpha1
+    kind: KubeProxyConfiguration
+    mode: ipvs
+    ipvs:
+      scheduler: rr
+    clientConnection:
+      kubeconfig: /etc/kubernetes/kubeconfig
+    clusterCIDR: {{ required "podCIDR must be specified!" .Values.podCIDR }}
+    metricsBindAddress: HOST_IP
+    healthzBindAddress: HOST_IP
+    hostnameOverride: NODE_NAME
+  kubeconfig: |
+    apiVersion: v1
+    clusters:
+    - name: local
+      cluster:
+        {{- if gt (len .Values.apiServers) 1 }}
+        server: https://HOST_IP:9443
+        {{- else }}
+        server: https://{{- index .Values.apiServers 0 }}
+        {{- end }}
+        certificate-authority: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+    users:
+    - name: service-account
+      user:
+        # Use service account token
+        tokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+    contexts:
+    - context:
+        cluster: local
+        user: service-account
+  {{- if gt (len .Values.apiServers) 1 }}
+  haproxy.cfg: |
+    defaults
+      # Do TLS passthrough
+      mode tcp
+      # Required values for both frontend and backend
+      timeout connect 5s
+      timeout client 30s
+      timeout client-fin 30s
+      timeout server 30s
+      timeout tunnel 21d
+
+    frontend kube-apiserver
+      bind HOST_IP:9443
+      default_backend kube-apiserver
+
+    backend kube-apiserver
+      option httpchk GET /healthz HTTP/1.1\r\nHost:\ kube-apiserver
+      {{- range $index, $server := .Values.apiServers }}
+      server {{ $index }} {{ $server }} verify none check check-ssl
+      {{- end }}
+
+    frontend stats
+      bind HOST_IP:9080
+      mode http
+      option http-use-htx
+      http-request use-service prometheus-exporter if { path /metrics }
+      stats enable
+      stats uri /stats
+      stats refresh 10s
+  {{- end }}
