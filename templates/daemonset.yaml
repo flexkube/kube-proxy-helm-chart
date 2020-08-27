@@ -35,9 +35,8 @@ spec:
         operator: Exists
       containers:
       - name: kube-proxy
-        image: {{ .Values.image | default (printf "k8s.gcr.io/hyperkube:v%s" .Chart.AppVersion) }}
+        image: {{ .Values.image | default (printf "k8s.gcr.io/kube-proxy:v%s" .Chart.AppVersion) }}
         command:
-        - ./hyperkube
         - kube-proxy
         - --config=/etc/kubernetes/kube-proxy.yaml
         livenessProbe:
@@ -79,7 +78,7 @@ spec:
       {{- end }}
       initContainers:
       - name: config-templates
-        image: {{ .Values.image | default (printf "k8s.gcr.io/hyperkube:v%s" .Chart.AppVersion) }}
+        image: {{ .Values.image | default (printf "k8s.gcr.io/kube-proxy:v%s" .Chart.AppVersion) }}
         env:
         - name: HOST_IP
           valueFrom:
