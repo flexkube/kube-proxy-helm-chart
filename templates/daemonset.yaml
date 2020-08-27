@@ -61,7 +61,7 @@ spec:
             memory: 20Mi
       {{- if gt (len .Values.apiServers) 1 }}
       - name: kube-apiserver-load-balancer
-        image: haproxy:2.1.4-alpine
+        image: {{ .Values.haproxyImage }}
         volumeMounts:
         - name: kube-proxy
           mountPath: /usr/local/etc/haproxy
