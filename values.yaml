@@ -1,4 +1,4 @@
 image: ""
 apiServers: []
 podCIDR: ""
-haproxyImage: "haproxy:2.1.4-alpine"
+haproxyImage: "haproxy:2.2.2-alpine"
