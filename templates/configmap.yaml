@@ -9,6 +9,7 @@ data:
     mode: ipvs
     ipvs:
       scheduler: rr
+      tcpFinTimeout: 30s
     clientConnection:
       kubeconfig: /etc/kubernetes/kubeconfig
     clusterCIDR: {{ required "podCIDR must be specified!" .Values.podCIDR }}
