@@ -59,7 +59,6 @@ spec:
         resources:
           requests:
             memory: 20Mi
-      {{- if gt (len .Values.apiServers) 1 }}
       - name: kube-apiserver-load-balancer
         image: {{ .Values.haproxyImage }}
         volumeMounts:
@@ -75,7 +74,6 @@ spec:
             port: 9080
           initialDelaySeconds: 15
           timeoutSeconds: 15
-      {{- end }}
       initContainers:
       - name: config-templates
         image: {{ .Values.image | default (printf "k8s.gcr.io/kube-proxy:v%s" .Chart.AppVersion) }}
@@ -94,9 +92,7 @@ spec:
         - |
           sed 's/HOST_IP/$(HOST_IP)/g' /etc/kubernetes.template/kube-proxy.yaml > /etc/kubernetes/kube-proxy.yaml && \
           sed -i 's/NODE_NAME/$(NODE_NAME)/g' /etc/kubernetes/kube-proxy.yaml && \
-          {{- if gt (len .Values.apiServers) 1 }}
           sed 's/HOST_IP/$(HOST_IP)/g' /etc/kubernetes.template/haproxy.cfg > /etc/kubernetes/haproxy.cfg && \
-          {{- end }}
           sed 's/HOST_IP/$(HOST_IP)/g' /etc/kubernetes.template/kubeconfig > /etc/kubernetes/kubeconfig
         volumeMounts:
         - name: kube-proxy-template

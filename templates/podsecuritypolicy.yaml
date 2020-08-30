@@ -32,11 +32,9 @@ spec:
     ranges:
       - min: 1
         max: 65535
-  {{- if gt (len .Values.apiServers) 1 }}
   hostPorts:
   - min: 9080
     max: 9080
-	{{- end }}
   allowedHostPaths:
   - pathPrefix: "/lib/modules"
   - pathPrefix: "/run/xtables.lock"

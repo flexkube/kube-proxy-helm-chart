@@ -35,7 +35,6 @@ data:
     - context:
         cluster: local
         user: service-account
-  {{- if gt (len .Values.apiServers) 1 }}
   haproxy.cfg: |
     defaults
       # Do TLS passthrough
@@ -47,6 +46,7 @@ data:
       timeout server 30s
       timeout tunnel 21d
 
+    {{- if gt (len .Values.apiServers) 1 }}
     frontend kube-apiserver
       bind HOST_IP:9443
       default_backend kube-apiserver
@@ -57,6 +57,16 @@ data:
       {{- range $index, $server := .Values.apiServers }}
       server {{ $index }} {{ $server }} verify none check check-ssl
       {{- end }}
+    {{- end }}
+
+    frontend kube-proxy
+      bind 127.0.0.1:10249
+      default_backend kube-proxy
+
+    backend kube-proxy
+      option httpchk
+      http-check send meth GET uri /healthz ver HTTP/1.1 hdr host kube-proxy
+      server 1 HOST_IP:10249
 
     frontend stats
       bind HOST_IP:9080
@@ -66,4 +76,3 @@ data:
       stats enable
       stats uri /stats
       stats refresh 10s
-  {{- end }}
