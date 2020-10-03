@@ -22,7 +22,7 @@ data:
     - name: local
       cluster:
         {{- if gt (len .Values.apiServers) 1 }}
-        server: https://HOST_IP:9443
+        server: https://127.0.0.1:9443
         {{- else }}
         server: https://{{- index .Values.apiServers 0 }}
         {{- end }}
@@ -49,7 +49,7 @@ data:
 
     {{- if gt (len .Values.apiServers) 1 }}
     frontend kube-apiserver
-      bind HOST_IP:9443
+      bind 127.0.0.1:9443
       default_backend kube-apiserver
 
     backend kube-apiserver
