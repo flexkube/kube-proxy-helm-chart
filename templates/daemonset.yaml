@@ -5,9 +5,6 @@ metadata:
   labels:
     tier: node
     k8s-app: kube-proxy
-  annotations:
-    # Automatically rolls update when config changes
-    checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
 spec:
   selector:
     matchLabels:
@@ -22,6 +19,9 @@ spec:
       labels:
         tier: node
         k8s-app: kube-proxy
+      annotations:
+        # Automatically rolls update when config changes.
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
       hostNetwork: true
       priorityClassName: system-node-critical
