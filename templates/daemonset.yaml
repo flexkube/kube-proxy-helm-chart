@@ -58,7 +58,10 @@ spec:
           mountPath: /run/xtables.lock
         resources:
           requests:
-            memory: 20Mi
+            cpu: 5m
+            memory: 25Mi
+          limits:
+            memory: 100Mi
       - name: kube-apiserver-load-balancer
         image: {{ .Values.haproxyImage }}
         volumeMounts:
@@ -74,6 +77,11 @@ spec:
             port: 9080
           initialDelaySeconds: 15
           timeoutSeconds: 15
+        resources:
+          requests:
+            memory: 70Mi
+          limits:
+            memory: 200Mi
       initContainers:
       - name: config-templates
         image: {{ .Values.image | default (printf "k8s.gcr.io/kube-proxy:v%s" .Chart.AppVersion) }}
