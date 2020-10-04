@@ -16,6 +16,12 @@ data:
     metricsBindAddress: HOST_IP
     healthzBindAddress: HOST_IP
     hostnameOverride: NODE_NAME
+    {{- if gt (len .Values.nodePortAddresses) 0 }}
+    nodePortAddresses:
+    {{- range $index, $address := .Values.nodePortAddresses }}
+    - {{ $address }}
+    {{- end }}
+    {{- end }}
   kubeconfig: |
     apiVersion: v1
     clusters:
