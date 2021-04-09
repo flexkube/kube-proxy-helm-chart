@@ -20,6 +20,7 @@ spec:
         tier: node
         k8s-app: kube-proxy
       annotations:
+        kubectl.kubernetes.io/default-container: kube-proxy
         # Automatically rolls update when config changes.
         checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
     spec:
