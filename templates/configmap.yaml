@@ -79,7 +79,6 @@ data:
     frontend stats
       bind HOST_IP:9080
       mode http
-      option http-use-htx
       http-request use-service prometheus-exporter if { path /metrics }
       stats enable
       stats uri /metrics
