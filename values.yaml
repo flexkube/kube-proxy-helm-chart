@@ -1,5 +1,5 @@
 image: ""
 apiServers: []
 podCIDR: ""
-haproxyImage: "haproxy:2.9.7-alpine"
+haproxyImage: "haproxy:2.9.9-alpine"
 nodePortAddresses: []
