@@ -55,7 +55,7 @@ data:
       timeout tunnel 21d
 
     {{- if gt (len .Values.apiServers) 1 }}
-    frontend kube-apiserver
+    frontend kube-apiserver-frontend
       bind 127.0.0.1:9443
       default_backend kube-apiserver
 
@@ -67,7 +67,7 @@ data:
       {{- end }}
     {{- end }}
 
-    frontend kube-proxy
+    frontend kube-proxy-frontend
       bind 127.0.0.1:10249
       default_backend kube-proxy
 
