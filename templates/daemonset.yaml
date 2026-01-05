@@ -55,8 +55,6 @@ spec:
         - name: lib-modules
           mountPath: /lib/modules
           readOnly: true
-        - name: xtables
-          mountPath: /run/xtables.lock
         resources:
           requests:
             cpu: 5m
@@ -117,7 +115,3 @@ spec:
       - name: lib-modules
         hostPath:
           path: /lib/modules
-      - name: xtables
-        hostPath:
-          path: /run/xtables.lock
-          type: File

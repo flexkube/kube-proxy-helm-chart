@@ -6,11 +6,7 @@ data:
   kube-proxy.yaml: |
     apiVersion: kubeproxy.config.k8s.io/v1alpha1
     kind: KubeProxyConfiguration
-    mode: ipvs
-    ipvs:
-      scheduler: rr
-      tcpFinTimeout: 30s
-      strictARP: true
+    mode: nftables
     clientConnection:
       kubeconfig: /etc/kubernetes/kubeconfig
     clusterCIDR: {{ required "podCIDR must be specified!" .Values.podCIDR }}
